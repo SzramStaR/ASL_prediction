@@ -77,8 +77,6 @@ while True:
             if(last_prediction_time is not None and time.time() - last_prediction_time > 2):
                 predictions.clear()
                 output_text+=" "
-                txt_reader.read_string(output_text)
-                output_text = ""
                 last_prediction_time = None
             if len(predictions) == 30:
                 most_common = collections.Counter(predictions).most_common(1)
