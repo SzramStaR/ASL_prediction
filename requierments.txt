@@ -1,2 +1,10 @@
 gtts
 playsound
+os
+cv2
+tensorflow
+numpy
+matplotlib
+time
+mediapipe
+
