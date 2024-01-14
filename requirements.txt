@@ -1,0 +1,9 @@
+gtts
+playsound==1.2.2
+opencv-python
+tensorflow
+numpy
+matplotlib
+mediapipe
+scipy
+
