@@ -9,6 +9,7 @@ from time import sleep
 from tensorflow.keras.preprocessing.image import img_to_array
 import collections
 from scipy.spatial.distance import pdist
+import txt_reader
 
 #Load the model
 model = load_model('My_model_landmarks_final2.h5')
@@ -87,5 +88,6 @@ while True:
         break
 
 print(output_text)
+txt_reader.read_string(output_text)
 video.release()
 cv2.destroyAllWindows()
