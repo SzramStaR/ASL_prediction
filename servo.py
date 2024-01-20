@@ -24,7 +24,7 @@ def read_letter(letter):
 def set_angle(val):
     def move_servo():
         try:
-            servo.angle = val
+            servo.value = val
             sleep(1)  # This will only block the current thread
         except KeyboardInterrupt:
             print("Servo stopped")
@@ -48,7 +48,8 @@ mp_drawing = mp.solutions.drawing_utils
 padding = 50
 
 servo = Servo(24)
-val = -1    
+val = -1
+servo.detach()
 
 
 last_prediction_time = None
@@ -86,9 +87,11 @@ while True:
                 if center_x > prev_center_x:
                     print("Hand moved to the right")
                     set_angle(-1)
+                    servo.detach()
                 elif center_x < prev_center_x:
                     print("Hand moved to the left")
                     set_angle(1)
+                    servo.detach()
 
             prev_center_x = center_x
 
