@@ -12,12 +12,20 @@ import collections
 from scipy.spatial.distance import pdist
 import txt_reader
 from picamera2 import Picamera2
+from gpiozero import Servo
 
 def read_letter(letter):
     language = 'pl'
     speech = gTTS(text=output_text, lang=language, slow=False)
     speech.save("text.mp3")
     os.system("mpg321 text.mp3 >/dev/null 2>&1")
+
+def set_angle(val):
+    try:
+        servo.angle = val
+    except KeyboardInterrupt:
+        print("Servo stopped")
+        
 
 #Load the model
 model = load_model('My_model_landmarks_final2.h5')
@@ -31,7 +39,11 @@ labels_to_char = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False,max_num_hands=2,min_detection_confidence=0.5,min_tracking_confidence=0.5)
 mp_drawing = mp.solutions.drawing_utils
-padding = 50 #Padding so that whole hand fits
+
+
+servo = Servo(24)
+val = -1    
+
 
 last_prediction_time = None
 predictions=[]
@@ -67,10 +79,10 @@ while True:
             if prev_center_x is not None and prev_center_y is not None:
             if center_x > prev_center_x:
                 print("Hand moved to the right")
-                # Add code to move the servomechanism to the right
+                set_angle(-1)
             elif center_x < prev_center_x:
                 print("Hand moved to the left")
-                # Add code to move the servomechanism to the left
+                set_angle(1)
 
             prev_center_x = center_x
 
