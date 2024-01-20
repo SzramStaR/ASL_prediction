@@ -37,7 +37,7 @@ labels_to_char = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False,max_num_hands=2,min_detection_confidence=0.5,min_tracking_confidence=0.5)
 mp_drawing = mp.solutions.drawing_utils
-padding = 50
+padding = 10
 
 servo = Servo(24)
 val = -1
@@ -60,8 +60,8 @@ while True:
     frame.flags.writeable = True
     frame = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
     frame_center_x = frame.shape[1]/ 2  #Width 
+    center_x = None
     if results.multi_hand_landmarks:
-        prev_center_x = None  
         for hand_landmarks in results.multi_hand_landmarks:
             #Calculate the bounding box of the hand
             x_min = max(0,min([landmark.x for landmark in hand_landmarks.landmark])*frame.shape[1]-padding)
@@ -70,18 +70,15 @@ while True:
             y_max = min(frame.shape[0],max([landmark.y for landmark in hand_landmarks.landmark])*frame.shape[0]+padding)
 
             center_x = (x_min + x_max) / 2
-            
-            if prev_center_x is not None:
-                if center_x > frame_center_x + padding:
-                    print("Hand moved to the right")
-                    set_angle(-0.25)
-                elif center_x < frame_center_x + padding:
-                    print("Hand moved to the left")
-                    set_angle(0.25)
-                else:
-                    servo.detach()
 
-            prev_center_x = center_x
+            if center_x > frame_center_x + padding:
+                print("Hand moved to the right")
+                set_angle(0.0)
+            elif center_x < frame_center_x - padding:
+                print("Hand moved to the left")
+                set_angle(0.25)
+            else:
+                servo.detach()
 
             #Draw hand landmarks
             mp_drawing.draw_landmarks(frame,hand_landmarks,mp_hands.HAND_CONNECTIONS)
@@ -104,6 +101,10 @@ while True:
                 output_text+=labels_to_char[most_common[0][0]]
                 read_letter(output_text)
                 predictions.clear()
+    else:
+        servo.detach()
+
+    print(center_x, frame_center_x, servo.value)
 
     cv2.imshow("MediaPipe Hands", frame)
     if cv2.waitKey(5) & 0xFF == 27:
