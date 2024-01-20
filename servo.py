@@ -26,6 +26,7 @@ def set_angle(val):
         try:
             servo.value = val
             sleep(1)  # This will only block the current thread
+            servo.detach()
         except KeyboardInterrupt:
             print("Servo stopped")
 
@@ -86,12 +87,10 @@ while True:
             if prev_center_x is not None:
                 if center_x > prev_center_x:
                     print("Hand moved to the right")
-                    set_angle(-1)
-                    servo.detach()
+                    set_angle(-0.5)
                 elif center_x < prev_center_x:
                     print("Hand moved to the left")
-                    set_angle(1)
-                    servo.detach()
+                    set_angle(0.5)
 
             prev_center_x = center_x
 
