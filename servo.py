@@ -67,7 +67,7 @@ while True:
         #print(ret, frame)
         #break
     #Convert to rgb
-    frame = cv2.cvtColor(cv2.flip(frame,1) ,cv2.COLOR_BGR2RGB)
+    frame = cv2.cvtColor(cv2.flip(frame,-1) ,cv2.COLOR_BGR2RGB)
     frame.flags.writeable = False
     results = hands.process(frame)
     frame.flags.writeable = True
