@@ -13,6 +13,7 @@ from scipy.spatial.distance import pdist
 import txt_reader
 from picamera2 import Picamera2
 from gpiozero import Servo
+import threading
 
 def read_letter(letter):
     language = 'pl'
@@ -21,10 +22,15 @@ def read_letter(letter):
     os.system("mpg321 text.mp3 >/dev/null 2>&1")
 
 def set_angle(val):
-    try:
-        servo.angle = val
-    except KeyboardInterrupt:
-        print("Servo stopped")
+    def move_servo():
+        try:
+            servo.angle = val
+            sleep(1)  # This will only block the current thread
+        except KeyboardInterrupt:
+            print("Servo stopped")
+
+    # Create a new thread for the servo control
+    threading.Thread(target=move_servo).start()
         
 
 #Load the model
