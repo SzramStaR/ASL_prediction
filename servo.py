@@ -77,12 +77,12 @@ while True:
             center_x = (x_min + x_max) / 2
             
             if prev_center_x is not None and prev_center_y is not None:
-            if center_x > prev_center_x:
-                print("Hand moved to the right")
-                set_angle(-1)
-            elif center_x < prev_center_x:
-                print("Hand moved to the left")
-                set_angle(1)
+                if center_x > prev_center_x:
+                    print("Hand moved to the right")
+                    set_angle(-1)
+                elif center_x < prev_center_x:
+                    print("Hand moved to the left")
+                    set_angle(1)
 
             prev_center_x = center_x
 
