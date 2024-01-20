@@ -22,16 +22,7 @@ def read_letter(letter):
     os.system("mpg321 text.mp3 >/dev/null 2>&1")
 
 def set_angle(val):
-    def move_servo():
-        try:
-            servo.value = val
-            sleep(1)  # This will only block the current thread
-            servo.detach()
-        except KeyboardInterrupt:
-            print("Servo stopped")
-
-    # Create a new thread for the servo control
-    threading.Thread(target=move_servo).start()
+    servo.value = val
         
 
 #Load the model
@@ -63,16 +54,12 @@ picam2.start()
 
 while True:
     frame = picam2.capture_array()
-    #ret, frame = video.read()
-    #if not ret:
-        #print(ret, frame)
-        #break
-    #Convert to rgb
     frame = cv2.cvtColor(cv2.flip(frame,-1) ,cv2.COLOR_BGR2RGB)
     frame.flags.writeable = False
     results = hands.process(frame)
     frame.flags.writeable = True
     frame = cv2.cvtColor(frame,cv2.COLOR_RGB2BGR)
+    frame_center_x = frame.shape[1]/ 2  #Width 
     if results.multi_hand_landmarks:
         prev_center_x = None  
         for hand_landmarks in results.multi_hand_landmarks:
@@ -85,12 +72,14 @@ while True:
             center_x = (x_min + x_max) / 2
             
             if prev_center_x is not None:
-                if center_x > prev_center_x:
+                if center_x > frame_center_x + padding:
                     print("Hand moved to the right")
-                    set_angle(-0.5)
-                elif center_x < prev_center_x:
+                    set_angle(-0.25)
+                elif center_x < frame_center_x + padding:
                     print("Hand moved to the left")
-                    set_angle(0.5)
+                    set_angle(0.25)
+                else:
+                    servo.detach()
 
             prev_center_x = center_x
 
