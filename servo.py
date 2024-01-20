@@ -45,7 +45,7 @@ labels_to_char = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False,max_num_hands=2,min_detection_confidence=0.5,min_tracking_confidence=0.5)
 mp_drawing = mp.solutions.drawing_utils
-
+padding = 50
 
 servo = Servo(24)
 val = -1    
@@ -82,7 +82,7 @@ while True:
 
             center_x = (x_min + x_max) / 2
             
-            if prev_center_x is not None and prev_center_y is not None:
+            if prev_center_x is not None:
                 if center_x > prev_center_x:
                     print("Hand moved to the right")
                     set_angle(-1)
