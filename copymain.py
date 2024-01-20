@@ -1,7 +1,6 @@
 import os
 import cv2
 from tensorflow.keras.models import load_model
-from gtts import gTTS
 import numpy as np
 import matplotlib.pyplot as plt
 import time
@@ -12,12 +11,7 @@ import collections
 from scipy.spatial.distance import pdist
 import txt_reader
 from picamera2 import Picamera2
-
-def read_letter(letter):
-    language = 'pl'
-    speech = gTTS(text=output_text, lang=language, slow=False)
-    speech.save("text.mp3")
-    os.system("mpg321 text.mp3 >/dev/null 2>&1")
+from libcamera import Transform
 
 #Load the model
 model = load_model('My_model_landmarks_final2.h5')
@@ -33,12 +27,25 @@ hands = mp_hands.Hands(static_image_mode=False,max_num_hands=2,min_detection_con
 mp_drawing = mp.solutions.drawing_utils
 padding = 50 #Padding so that whole hand fits
 
+# image_path = '/home/szramstar/Desktop/SW/test_b.jpg'
+# image = cv2.imread(image_path)
+# image = cv2.resize(image,(64,64))
+# image = img_to_array(image)
+# image = np.expand_dims(image,axis=0)
+# image = image/255.0
+# prediction = model.predict(image)
+# label = np.argmax(prediction)
+
+
+# print(labels_to_char[label])
+
 last_prediction_time = None
 predictions=[]
-output_text = ""
 
+output_text = ""
+#video = cv2.VideoCapture(0)
 picam2 = Picamera2()
-#picam2.create_preview_I
+#picam2.start_preview(Preview.QTGL, transform = Transform(hflip=1, vflip=1))
 picam2.start()
 
 while True:
@@ -82,14 +89,17 @@ while True:
                 most_common = collections.Counter(predictions).most_common(1)
                 print(labels_to_char[most_common[0][0]])
                 output_text+=labels_to_char[most_common[0][0]]
-                read_letter(output_text)
                 predictions.clear()
 
-    cv2.imshow("MediaPipe Hands", frame)
-    if cv2.waitKey(5) & 0xFF == 27:
-        break
+
+   cv2.imshow("MediaPipe Hands", frame)
+   if cv2.waitKey(5) & 0xFF == 27:
+       break
 
 print(output_text)
+speech = gTTS(text=msg, lang='pl', slow=False)
+speech.save("text.mp3")
+os.system('mpg321 text.mp3 &')
 
 video.release()
 cv2.destroyAllWindows()
