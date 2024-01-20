@@ -70,20 +70,7 @@ while True:
             y_max = min(frame.shape[0],max([landmark.y for landmark in hand_landmarks.landmark])*frame.shape[0]+padding)
 
             center_x = (x_min + x_max) / 2
-<<<<<<< HEAD
-=======
             
-            if prev_center_x is not None:
-                if center_x > frame_center_x + padding:
-                    print("Hand moved to the right")
-                    set_angle(-0.25)
-                elif center_x < frame_center_x + padding:
-                    print("Hand moved to the left")
-                    set_angle(0.25)
-            else:
-                servo.detach()
->>>>>>> 36c6e301d8195d45a0c3e52f557f3a60575ecc08
-
             if center_x > frame_center_x + padding:
                 print("Hand moved to the right")
                 set_angle(0.0)
