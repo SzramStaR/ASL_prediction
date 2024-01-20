@@ -78,8 +78,8 @@ while True:
                 elif center_x < frame_center_x + padding:
                     print("Hand moved to the left")
                     set_angle(0.25)
-                else:
-                    servo.detach()
+            else:
+                servo.detach()
 
             prev_center_x = center_x
 
