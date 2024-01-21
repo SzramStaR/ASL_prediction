@@ -21,10 +21,6 @@ def read_letter(letter):
     speech.save("text.mp3")
     os.system("mpg321 text.mp3 >/dev/null 2>&1")
 
-def set_angle(val):
-    servo.value = val
-        
-
 #Load the model
 model = load_model('My_model_landmarks_final2.h5')
 #Predcitions dictionary
@@ -37,12 +33,12 @@ labels_to_char = {0:'A',1:'B',2:'C',3:'D',4:'E',5:'F',6:'G',
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(static_image_mode=False,max_num_hands=2,min_detection_confidence=0.5,min_tracking_confidence=0.5)
 mp_drawing = mp.solutions.drawing_utils
-padding = 10
+padding = 100
 
 servo = Servo(24)
-val = -1
+#servo.angle = val
+servo.mid()
 servo.detach()
-
 
 last_prediction_time = None
 predictions=[]
@@ -72,13 +68,12 @@ while True:
             center_x = (x_min + x_max) / 2
             
             if center_x > frame_center_x + padding:
-                print("Hand moved to the right")
-                set_angle(0.0)
+                servo.value = -0.0
             elif center_x < frame_center_x - padding:
-                print("Hand moved to the left")
-                set_angle(0.25)
+                servo.value = 0.2 
             else:
                 servo.detach()
+
 
             #Draw hand landmarks
             mp_drawing.draw_landmarks(frame,hand_landmarks,mp_hands.HAND_CONNECTIONS)
@@ -103,7 +98,6 @@ while True:
                 predictions.clear()
     else:
         servo.detach()
-
     print(center_x, frame_center_x, servo.value)
 
     cv2.imshow("MediaPipe Hands", frame)
